@@ -1,7 +1,5 @@
 # DID
-Remote dumping and introspection framework for C#.
-
-Allows for an easy and low-effort diagnostics of a running application, remotely over the network and without the need for debug info.
+Remote dumping and introspection framework to help with diagnosing of running applications in production environments.
 
 
 Planned Features

@@ -29,6 +29,10 @@ namespace DID.Common
 	/// </summary>
 	public interface IDumpItem : IDisposable
 	{
+		EDIType Type { get { return EDIType.Invalid; } set {} }
+
+		string TypeName { get { return string.Empty;} set {} }
+
 		/// <summary>
 		/// The "key" part of the key-value pair
 		/// </summary>
@@ -51,5 +55,21 @@ namespace DID.Common
 
 
 		bool Expand { get { return false; } set {} }
+
+		int ArrayIndex  { get { return -1; } set {} }
+
+		int ArraySize  { get { return -1; } set {} }
+
+		int ArrayShowFrom  { get { return -1; } set {} }
+
+		int ArrayShowTo  { get { return -1; } set {} }
+
+		Action Action { get { return null;} set {} }
+
+		bool FireAction { get { return false; } set {} }
+		
+		bool Writable { get { return false; } set {} }
+
+		bool WriteBack { get { return false; } set {} }
 	}
 }

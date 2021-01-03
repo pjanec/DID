@@ -54,10 +54,25 @@ namespace DID.Client
 		{
 			if( disposing )
 			{
+				// unpublish DIs
+				foreach( var kv in diSubs )
+				{
+					node.Unpublish( kv.Key );
+				}
+				diSubs.Clear();
+
+				// unpublish Topicss
+				foreach( var kv in topicSubs )
+				{
+					node.Unpublish( kv.Key );
+				}
+				topicSubs.Clear();
+			
+				// forget the node
 				if( node != null )
 				{
-					// tell the node we don't need it
-					node.Unref();
+					// tell the node registry we don't need the node anymore
+					nreg.Dealloc( nodeIdent );	
 					node = null;
 				}
 			}
