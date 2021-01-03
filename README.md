@@ -1,14 +1,36 @@
 # DID
 Remote dumping and introspection framework for C#.
 
-Supports
+Allows for an easy and low-effort diagnostics of a running application, remotely over the network and without the need for debug info.
+
+
+Planned Features
 
 * Dumping of application internals (structures, arrays...) in a fast way (no reflection)
-* Publishing the dumps to a remote client to watch in real time (as in a debugger)
-* Changing the values from a remote client
-* Invoking actions defined by the dumping app from a remote client
+* Publishing the dumps to a remote client to be watched in real time (as in a debugger)
+* Watching selected data from multiple servers simultaneously
+* Changing the app data on request from a remote client
+* Invoking custom actions in the dumping app on request from a remote client
+* Low performance impact
+  * Just stuff being currently watched by some client is dumped.
+  * No runtime reflection used while dumping
+* Optimized data transfer
+  * Server sends just the items being currently watched by some client
+  * Just changes are sent
+  * [FBE library]( https://github.com/chronoxor/FastBinaryEncoding)-based data serialization
+* TCP based client-server architecture.
+  * Server in a dumped app, multiple remote clients.
+* Automatic scanning of available servers
+* Simple ImGui.NET based client UI
+* Kera-Lua based custom UI configuration
+  * Predefining set of data items to be watched
+  * Runtime watching for specific combination of servers or published data becoming available and displaying them in a custom format.
 
-WARNING! So far just a skeleton of classes with many missing parts.
+WARNING!
+
+So far just a skeleton of classes with many missing parts.
+
+
 
 # Example
 
@@ -18,7 +40,7 @@ using DID.Client;
 
 namespace Test
 {
-    // some class that supports dumping
+	// some class that supports dumping
 	public class MyClass : Dmp.IDumpable
 	{
 		int xInt = 7;
@@ -35,7 +57,7 @@ namespace Test
 		}
 	}
 
-    // some class containing another class
+	// some class containing another class
 	public class ContainerClass : Dmp.IDumpable
 	{
 		int xInt = 7;
@@ -52,13 +74,18 @@ namespace Test
 			
 			Dmp.KV( d, "my Int", xInt );
 			
-			Dmp.KV( d, "my Double", ref xDouble ); // marking by "ref" means the remote client can change the value
+			Dmp.KV( d, "my Double", ref xDouble ) // marking by "ref" means the remote client can change the value
+			   .WriteBackActionable( () => // optional callback on data changed by remote
+				{
+					Console.WriteLine("my Double field have been set from remote!") 
+				}
+			);
 
 			Dmp.KV( d, "my Class", myClass )
 			   .Actionable( () => // allow the client to invoke an action for this item
-			   {
-			       Console.WriteLine("Action has been fired on myClass field") 
-			   }
+				{
+					Console.WriteLine("Action has been fired on myClass field") 
+				}
 			);
 			
 			Dmp.KV( d, "my IntList", xIntList );
@@ -67,8 +94,8 @@ namespace Test
 	
 	class Program
 	{
-	    // sample data
-	    static ContainerClass myCC = new ContainerClass();
+		// sample data
+		static ContainerClass myCC = new ContainerClass();
 
 		static void Dump( DumpItem d )
 		{
