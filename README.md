@@ -1,6 +1,17 @@
 # DID
 Remote dumping and introspection framework to help with diagnosing of running applications in production environments.
 
+How it will work:
+
+ * App instatiates a web server publishing the internals of the application
+   * Arranged data (defined via user code in the app)
+   * Raw internal data structures (via reflection)
+ * Web browser displays the published content as a dynamic web page.
+ * The user browses the published data as if watching the app using a remote debugger.
+   * Multiple watch items can be defined to see various information together at the same time.
+ * The app can specify some data as mutable, changeable via the browser.
+ * The app can define various actions that can be triggered from the browser.
+
 
 Planned Features
 
